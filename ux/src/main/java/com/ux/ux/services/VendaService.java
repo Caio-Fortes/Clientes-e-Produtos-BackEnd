@@ -1,0 +1,31 @@
+package com.ux.ux.services;
+
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ux.ux.models.ClienteModel;
+import com.ux.ux.models.VendaModel;
+import com.ux.ux.repositories.VendaRepository;
+
+@Service
+public class VendaService {
+
+    @Autowired
+    private VendaRepository vendaRepository;
+
+    @Autowired
+    private ClienteService clienteService;
+   
+    public VendaModel criarVenda(VendaModel vendaModel, UUID clienteId) {
+        // Usar o ClienteService para buscar o cliente
+        ClienteModel cliente = clienteService.findClienteById(clienteId);
+
+        // Associar o cliente encontrado à venda
+        vendaModel.setCliente(cliente);
+
+        // Salvar a venda
+        return vendaRepository.save(vendaModel);
+    }
+}

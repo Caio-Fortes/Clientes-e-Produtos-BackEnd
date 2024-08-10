@@ -29,11 +29,18 @@ public class ClienteController {
     ClienteRepository clienteRepository;
 
     @PostMapping("/clientes")
-    public ResponseEntity<ClienteModel> saveCliente(@RequestBody @Valid ClienteRecordDto clienteRecordDto) {
+    public ResponseEntity<Object> saveCliente(@RequestBody @Valid ClienteRecordDto clienteRecordDto) {
+        Optional<ClienteModel> existingCliente = clienteRepository.findByCNPJ(clienteRecordDto.CNPJ());
+        
+        if (existingCliente.isPresent()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Erro: CNPJ já cadastrado!");
+        }
+
         var clienteModel = new ClienteModel();
         BeanUtils.copyProperties(clienteRecordDto, clienteModel);
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteRepository.save(clienteModel));
     }
+
 
     @GetMapping("/clientes")
     public ResponseEntity<List<ClienteModel>> getAllClientes() {
@@ -63,6 +70,7 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.save(clienteModel));
     }
 
+    //deve excluir todas as vendas com o id do cliente que foi enviado
     @DeleteMapping("/clientes/{id}")
     public ResponseEntity<Object> deleteCliente(@PathVariable(value = "id")UUID id) 
     {

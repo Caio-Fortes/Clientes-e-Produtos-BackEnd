@@ -23,6 +23,14 @@ public class ClienteModel implements Serializable{
     private String telefone;
     private String UI;
     
+    public UUID getIdCliente() {
+        return idCLiente;
+    }
+
+    public void setIdCliente(UUID idCliente) {
+        this.idCLiente = idCliente;
+    }
+
     public String getNome() {
         return nome;
     }
