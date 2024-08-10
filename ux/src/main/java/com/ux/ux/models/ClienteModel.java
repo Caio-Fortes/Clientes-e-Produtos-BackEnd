@@ -1,9 +1,6 @@
 package com.ux.ux.models;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
-
-import javax.annotation.Generated;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
