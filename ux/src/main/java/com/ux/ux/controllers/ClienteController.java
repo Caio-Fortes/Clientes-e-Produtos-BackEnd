@@ -18,6 +18,7 @@ import com.ux.ux.dtos.ClienteRecordDto;
 import com.ux.ux.models.ClienteModel;
 import com.ux.ux.repositories.ClienteRepository;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,6 +42,7 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteRepository.save(clienteModel));
     }
 
+    @CrossOrigin(origins = "*")
     @GetMapping("/clientes")
     public ResponseEntity<List<ClienteModel>> getAllClientes() {
         return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.findAll());
