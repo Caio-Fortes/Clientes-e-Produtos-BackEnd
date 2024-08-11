@@ -19,13 +19,8 @@ public class VendaService {
     private ClienteService clienteService;
    
     public VendaModel criarVenda(VendaModel vendaModel, UUID clienteId) {
-        // Usar o ClienteService para buscar o cliente
         ClienteModel cliente = clienteService.findClienteById(clienteId);
-
-        // Associar o cliente encontrado à venda
         vendaModel.setCliente(cliente);
-
-        // Salvar a venda
         return vendaRepository.save(vendaModel);
     }
 }

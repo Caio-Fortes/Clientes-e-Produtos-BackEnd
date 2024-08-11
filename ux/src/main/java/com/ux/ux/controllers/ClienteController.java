@@ -41,7 +41,6 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(clienteRepository.save(clienteModel));
     }
 
-
     @GetMapping("/clientes")
     public ResponseEntity<List<ClienteModel>> getAllClientes() {
         return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.findAll());
@@ -70,7 +69,7 @@ public class ClienteController {
         return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.save(clienteModel));
     }
 
-    //deve excluir todas as vendas com o id do cliente que foi enviado
+    //checkpoint: deve excluir todas as vendas com o id do cliente que foi enviado.
     @DeleteMapping("/clientes/{id}")
     public ResponseEntity<Object> deleteCliente(@PathVariable(value = "id")UUID id) 
     {
