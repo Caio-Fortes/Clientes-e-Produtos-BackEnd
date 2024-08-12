@@ -6,6 +6,8 @@ import java.util.UUID;
 
 import javax.validation.Valid;
 
+import com.ux.ux.models.VendaModel;
+import com.ux.ux.services.ClienteService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,58 +30,56 @@ public class ClienteController {
 
     @Autowired
     ClienteRepository clienteRepository;
+    @Autowired
+    private ClienteService clienteService;
 
     @PostMapping("/clientes")
     public ResponseEntity<Object> saveCliente(@RequestBody @Valid ClienteRecordDto clienteRecordDto) {
-        Optional<ClienteModel> existingCliente = clienteRepository.findByCNPJ(clienteRecordDto.CNPJ());
-        
-        if (existingCliente.isPresent()) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Erro: CNPJ já cadastrado!");
-        }
+        Optional<ClienteModel> clienteModelOptional = Optional.ofNullable(clienteService.save(clienteRecordDto));
 
-        var clienteModel = new ClienteModel();
-        BeanUtils.copyProperties(clienteRecordDto, clienteModel);
-        return ResponseEntity.status(HttpStatus.CREATED).body(clienteRepository.save(clienteModel));
+        return clienteModelOptional.<ResponseEntity<Object>>map(clienteModel -> ResponseEntity.status(HttpStatus.CREATED).body(clienteModel)).orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).body("Erro: CNPJ já cadastrado!"));
     }
 
     @CrossOrigin(origins = "*")
     @GetMapping("/clientes")
     public ResponseEntity<List<ClienteModel>> getAllClientes() {
-        return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.findAll());
+
+        return ResponseEntity.status(HttpStatus.OK).body(clienteService.findAllClientes());
     }
 
     @GetMapping("/clientes/{id}")
-    public ResponseEntity<Object> getOneCliente(@PathVariable(value = "id")UUID id) {
-        Optional<ClienteModel> cliente0 = clienteRepository.findById(id);
-        if(cliente0.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("cliente não encontrado!");
-        }
-        return  ResponseEntity.status(HttpStatus.OK).body(cliente0.get());
+    public ResponseEntity<Object> getOneCliente(@PathVariable UUID id) {
+        Optional<ClienteModel> clienteModelOptional = Optional.ofNullable(clienteService.findClienteById(id));
+
+        return clienteModelOptional.<ResponseEntity<Object>>map(clienteModel -> ResponseEntity.status(HttpStatus.OK).body(clienteModel)).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!"));
     }
     
     @PutMapping("/clientes/{id}")
-    public ResponseEntity<Object> updateCliente(@PathVariable(value = "id")UUID id,
+    public ResponseEntity<Object> updateCliente(@PathVariable UUID id,
         @RequestBody @Valid ClienteRecordDto clienteRecordDto
     ) 
     {
-        Optional<ClienteModel> cliente0 = clienteRepository.findById(id);
-        if(cliente0.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("cliente não encontrado!");
+        ClienteModel clienteModel = clienteService.atualizarCliente(clienteRecordDto, id);
+
+        if (clienteModel == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrado!");
         }
-        var clienteModel = cliente0.get();
-        BeanUtils.copyProperties(clienteRecordDto, clienteModel);
-        return ResponseEntity.status(HttpStatus.OK).body(clienteRepository.save(clienteModel));
+
+        return new ResponseEntity<>(clienteRecordDto, HttpStatus.OK);
     }
 
     //checkpoint: deve excluir todas as vendas com o id do cliente que foi enviado.
     @DeleteMapping("/clientes/{id}")
-    public ResponseEntity<Object> deleteCliente(@PathVariable(value = "id")UUID id) 
+    public ResponseEntity<Object> deleteCliente(@PathVariable UUID id) 
     {
-        Optional<ClienteModel> cliente0 = clienteRepository.findById(id);
-        if(cliente0.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("cliente não encontrado!");
+        ClienteModel clienteModel = clienteService.findClienteById(id);
+
+        if (clienteModel == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrada!");
         }
-        clienteRepository.delete(cliente0.get());
-        return ResponseEntity.status(HttpStatus.OK).body("cliente deletado com sucesso!");
+
+        clienteService.deleteCliente(clienteModel);
+
+        return ResponseEntity.status(HttpStatus.OK).body("Cliente deletado com sucesso!");
     }
 }
