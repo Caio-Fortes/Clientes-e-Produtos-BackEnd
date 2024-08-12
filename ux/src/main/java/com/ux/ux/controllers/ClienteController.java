@@ -68,18 +68,16 @@ public class ClienteController {
         return new ResponseEntity<>(clienteRecordDto, HttpStatus.OK);
     }
 
-    //checkpoint: deve excluir todas as vendas com o id do cliente que foi enviado.
     @DeleteMapping("/clientes/{id}")
     public ResponseEntity<Object> deleteCliente(@PathVariable UUID id) 
     {
         ClienteModel clienteModel = clienteService.findClienteById(id);
-
+        
         if (clienteModel == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrada!");
         }
 
         clienteService.deleteCliente(clienteModel);
-
         return ResponseEntity.status(HttpStatus.OK).body("Cliente deletado com sucesso!");
     }
 }
