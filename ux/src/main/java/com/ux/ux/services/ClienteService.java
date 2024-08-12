@@ -44,7 +44,7 @@ public class ClienteService {
 
         var clienteModel = new ClienteModel();
         BeanUtils.copyProperties(clienteRecordDto, clienteModel);
-        return clienteModel;
+        return clienteRepository.save(clienteModel);
     }
 
     public ClienteModel atualizarCliente(ClienteRecordDto clienteRecordDto, UUID clienteId) {

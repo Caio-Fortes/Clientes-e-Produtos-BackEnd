@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+@CrossOrigin(origins = "*")
 @RestController
 public class ClienteController {
 
@@ -40,7 +41,6 @@ public class ClienteController {
         return clienteModelOptional.<ResponseEntity<Object>>map(clienteModel -> ResponseEntity.status(HttpStatus.CREATED).body(clienteModel)).orElseGet(() -> ResponseEntity.status(HttpStatus.CONFLICT).body("Erro: CNPJ já cadastrado!"));
     }
 
-    @CrossOrigin(origins = "*")
     @GetMapping("/clientes")
     public ResponseEntity<List<ClienteModel>> getAllClientes() {
 
