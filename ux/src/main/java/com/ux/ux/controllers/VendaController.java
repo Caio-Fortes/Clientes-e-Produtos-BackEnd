@@ -1,9 +1,8 @@
 package com.ux.ux.controllers;
 
-
+import com.ux.ux.dtos.RelatorioDTO;
 import com.ux.ux.dtos.VendaRecordDto;
 import com.ux.ux.models.VendaModel;
-import com.ux.ux.repositories.VendaRepository;
 import com.ux.ux.services.VendaService;
 
 import java.util.List;
@@ -20,9 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin(origins = "*")
 @RestController
 public class VendaController {
-
-    @Autowired
-    VendaRepository vendaRepository;
 
     @Autowired
     private VendaService vendaService;
@@ -74,5 +70,10 @@ public class VendaController {
         vendaService.deleteVenda(vendaModel);
 
         return ResponseEntity.status(HttpStatus.OK).body("Venda deletado com sucesso!");
+    }
+
+    @GetMapping("vendas/resumo-vendas")
+    public RelatorioDTO obterResumoVendas(String ano) {
+        return vendaService.obterRelatorio(ano);
     }
 }
