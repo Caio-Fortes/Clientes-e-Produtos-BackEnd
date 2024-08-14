@@ -72,12 +72,13 @@ public class ClienteController {
     public ResponseEntity<Object> deleteCliente(@PathVariable UUID id) 
     {
         ClienteModel clienteModel = clienteService.findClienteById(id);
-        
+
         if (clienteModel == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cliente não encontrada!");
         }
 
         clienteService.deleteCliente(clienteModel);
+        
         return ResponseEntity.status(HttpStatus.OK).body("Cliente deletado com sucesso!");
     }
 }
